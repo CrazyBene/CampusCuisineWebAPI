@@ -1,33 +1,74 @@
 var builder = WebApplication.CreateBuilder(args);
 
-var recipes = new List<Recipe>();
+var recipes = new Dictionary<int, Recipe>();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World");
+app.MapGet("/", () => Results.Ok(new { Status = "Server is online." }));
 
-app.MapPost("/createRecipe", (Recipe recipe) =>
+app.MapPost("/recipes", (Recipe recipe) =>
 {
-    recipes.Add(recipe);
+    recipes.Add(recipe.Id, recipe);
+
+    return Results.Created("", recipe);
 });
 
-app.MapGet("/getAllRecipes", () => recipes);
+app.MapGet("/recipes", () => Results.Ok(new { Recipes = recipes.Values.ToList() }));
 
-app.MapGet("/retrieveSingleRecipe/{id}", (int id) =>
+app.MapGet("/recipes/{id}", (int id) =>
 {
-    if (id >= recipes.Count)
+    if (!recipes.ContainsKey(id))
     {
-        return null;
+        return Results.NotFound();
     }
 
-    return recipes[id];
+    return Results.Ok(recipes[id]);
+});
+
+app.MapPut("/recipes/{id}", (int id, Recipe recipe) =>
+{
+    if (!recipes.ContainsKey(id))
+    {
+        return Results.NotFound();
+    }
+
+    recipe.Id = id;
+    recipes[recipe.Id] = recipe;
+
+    return Results.Ok(recipes[recipe.Id]);
+});
+
+app.MapPatch("/recipes/{id}", (int id, Recipe recipe) =>
+{
+    if (!recipes.ContainsKey(id))
+    {
+        return Results.NotFound();
+    }
+
+    recipes[recipe.Id].Category = recipe.Category;
+
+    return Results.Ok(recipes[recipe.Id]);
+});
+
+app.MapDelete("/recipes/{id}", (int id) =>
+{
+    if (!recipes.ContainsKey(id))
+    {
+        return Results.NotFound();
+    }
+
+    recipes.Remove(id);
+
+    return Results.NoContent();
 });
 
 app.Run();
 
-record Recipe(
-    string Name,
-    string Category,
-    string Ingredients,
-    string Instructions
-);
+record class Recipe
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public string? Category { get; set; }
+    public string? Ingredients { get; set; }
+    public string? Instructions { get; set; }
+}

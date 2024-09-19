@@ -9,3 +9,7 @@ In diesem ersten Schritt wird die Web-API selbst erstellt und gestartet. Es gibt
 ## Step 1: Minimal API
 
 Für diesen anfänglichen Test mit der Minimal API gibt es 4 Endpunkte, um mit der WebAPI zu interagieren. Sie folgen keine API-Architektur und sind nur aus Beispielzwecken so implementiert worden.
+
+## Step 2: Restful API
+
+Es sind nochmal weitere Endpunkte dazugekommen und alle Endpunkte wurde nach der REST-API-Architektur Restful implementiert.

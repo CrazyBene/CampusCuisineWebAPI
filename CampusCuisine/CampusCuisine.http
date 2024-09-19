@@ -1,15 +1,16 @@
 @CampusCuisine_HostAddress = http://localhost:5023
 
 GET {{CampusCuisine_HostAddress}}/
-Accept: text/plain
+Accept: application/json
 
 ###
 
-POST {{CampusCuisine_HostAddress}}/createRecipe
+POST {{CampusCuisine_HostAddress}}/recipes
 Content-Type: application/json
-Accept: text/plain
+Accept: application/json
 
 {
+    "id": 0,
     "name": "Protein-Müsli",
     "category": "Frühstück",
     "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
@@ -18,12 +19,40 @@ Accept: text/plain
 
 ###
 
-GET {{CampusCuisine_HostAddress}}/getAllRecipes
+GET {{CampusCuisine_HostAddress}}/recipes
 Accept: application/json
 
 ###
 
-GET {{CampusCuisine_HostAddress}}/retrieveSingleRecipe/0
+GET {{CampusCuisine_HostAddress}}/recipes/0
+Accept: application/json
+
+###
+
+PUT {{CampusCuisine_HostAddress}}/recipes/0
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "Protein-Müsli",
+    "category": "Hauptgericht",
+    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
+    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+}
+
+###
+
+PATCH {{CampusCuisine_HostAddress}}/recipes/0
+Content-Type: application/json
+Accept: application/json
+
+{
+    "category": "Abendbrot"
+}
+
+###
+
+DELETE  {{CampusCuisine_HostAddress}}/recipes/0
 Accept: application/json
 
 ###
