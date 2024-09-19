@@ -1,1 +1,29 @@
 @CampusCuisine_HostAddress = http://localhost:5023
+
+GET {{CampusCuisine_HostAddress}}/
+Accept: text/plain
+
+###
+
+POST {{CampusCuisine_HostAddress}}/createRecipe
+Content-Type: application/json
+Accept: text/plain
+
+{
+    "name": "Protein-Müsli",
+    "category": "Frühstück",
+    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
+    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+}
+
+###
+
+GET {{CampusCuisine_HostAddress}}/getAllRecipes
+Accept: application/json
+
+###
+
+GET {{CampusCuisine_HostAddress}}/retrieveSingleRecipe/0
+Accept: application/json
+
+###

@@ -5,3 +5,7 @@ Campus Cuisine ist ein Beispielprojekt, das zeigt, wie man mit ASP.Net Core eine
 ## Step 0: Empty Project
 
 In diesem ersten Schritt wird die Web-API selbst erstellt und gestartet. Es gibt vorerst keine Möglichkeit, mit ihr zu interagieren, und sie tut von sich auch nichts selber, außer Ressourcen zu verbrauchen.
+
+## Step 1: Minimal API
+
+Für diesen anfänglichen Test mit der Minimal API gibt es 4 Endpunkte, um mit der WebAPI zu interagieren. Sie folgen keine API-Architektur und sind nur aus Beispielzwecken so implementiert worden.
