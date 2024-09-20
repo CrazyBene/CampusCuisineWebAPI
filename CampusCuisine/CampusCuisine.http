@@ -56,3 +56,21 @@ DELETE  {{CampusCuisine_HostAddress}}/recipes/0
 Accept: application/json
 
 ###
+
+POST  {{CampusCuisine_HostAddress}}/recipes/0/ratings
+Content-Type: application/json
+Accept: application/json
+
+{
+    "id": 0,
+    "recipeId": 0,
+    "value": 3,
+    "comment": "Dies is ein Kommentar"
+}
+
+###
+
+GET  {{CampusCuisine_HostAddress}}/recipes/0/ratings
+Accept: application/json
+
+###

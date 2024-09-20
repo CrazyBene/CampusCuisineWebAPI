@@ -13,3 +13,7 @@ Für diesen anfänglichen Test mit der Minimal API gibt es 4 Endpunkte, um mit d
 ## Step 2: Restful API
 
 Es sind nochmal weitere Endpunkte dazugekommen und alle Endpunkte wurde nach der REST-API-Architektur Restful implementiert.
+
+## Step 3: Controller
+
+Die Rezept Endpunkte wurden in ihrem eigenen Controller zusammengeführt. Dies macht das ganze nicht nur übersichtlicher, sondern erlaubt später auch weitere Optimierungen.
