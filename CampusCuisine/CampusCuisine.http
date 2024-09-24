@@ -10,7 +10,6 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "id": 0,
     "name": "Protein-Müsli",
     "category": "Frühstück",
     "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
@@ -24,12 +23,12 @@ Accept: application/json
 
 ###
 
-GET {{CampusCuisine_HostAddress}}/recipes/0
+GET {{CampusCuisine_HostAddress}}/recipes/f05c06a4-fc4d-4784-8da7-9639439d5d9e
 Accept: application/json
 
 ###
 
-PUT {{CampusCuisine_HostAddress}}/recipes/0
+PUT {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
 Content-Type: application/json
 Accept: application/json
 
@@ -42,7 +41,7 @@ Accept: application/json
 
 ###
 
-PATCH {{CampusCuisine_HostAddress}}/recipes/0
+PATCH {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
 Content-Type: application/json
 Accept: application/json
 
@@ -52,25 +51,44 @@ Accept: application/json
 
 ###
 
-DELETE  {{CampusCuisine_HostAddress}}/recipes/0
+DELETE {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
 Accept: application/json
 
 ###
 
-POST  {{CampusCuisine_HostAddress}}/recipes/0/ratings
+POST {{CampusCuisine_HostAddress}}/recipes/f05c06a4-fc4d-4784-8da7-9639439d5d9e/ratings
 Content-Type: application/json
 Accept: application/json
 
 {
-    "id": 0,
-    "recipeId": 0,
-    "value": 3,
-    "comment": "Dies is ein Kommentar"
+    "value": 4
 }
 
 ###
 
-GET  {{CampusCuisine_HostAddress}}/recipes/0/ratings
+GET {{CampusCuisine_HostAddress}}/recipes/b8108960-c878-4836-99cd-6e0b32f33d05/ratings
+Accept: application/json
+
+###
+
+GET {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
+Accept: application/json
+
+###
+
+Put {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
+Content-Type: application/json
+Accept: application/json
+
+{
+    "value": 6,
+    "comment": "Dies is ein anderer Kommentar"
+}
+
+
+###
+
+DELETE {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
 Accept: application/json
 
 ###

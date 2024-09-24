@@ -17,3 +17,7 @@ Es sind nochmal weitere Endpunkte dazugekommen und alle Endpunkte wurde nach der
 ## Step 3: Controller
 
 Die Rezept Endpunkte wurden in ihrem eigenen Controller zusammengeführt. Dies macht das ganze nicht nur übersichtlicher, sondern erlaubt später auch weitere Optimierungen.
+
+## Step 4: Persistent data
+
+Bisher wurden die Daten nur in Variablen gespeichert, was dazu führte, dass sie bei jedem Neustart der Anwendung verloren gingen. Um dieses Problem zu lösen, wird jetzt eine Datenbank integriert. Diese ermöglicht es, die Daten auf der Festplatte zu speichern und dauerhaft verfügbar zu halten. So bleibt die Datenintegrität auch nach einem Neustart erhalten und sorgt für eine langfristige, zuverlässige Speicherung.
