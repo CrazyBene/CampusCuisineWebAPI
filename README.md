@@ -21,3 +21,7 @@ Die Rezept Endpunkte wurden in ihrem eigenen Controller zusammengeführt. Dies m
 ## Step 4: Persistent data
 
 Bisher wurden die Daten nur in Variablen gespeichert, was dazu führte, dass sie bei jedem Neustart der Anwendung verloren gingen. Um dieses Problem zu lösen, wird jetzt eine Datenbank integriert. Diese ermöglicht es, die Daten auf der Festplatte zu speichern und dauerhaft verfügbar zu halten. So bleibt die Datenintegrität auch nach einem Neustart erhalten und sorgt für eine langfristige, zuverlässige Speicherung.
+
+## Step 5: Validate data
+
+DTOs (Data Transfer Objects) werden während der Konvertierung in Domänenobjekte validiert. Sollte die Validierung fehlschlagen, werden die entsprechenden Fehler unmittelbar erkannt und zurückgemeldet, bevor die Daten in den weiteren Verarbeitungsprozess gelangen. Dies stellt sicher, dass nur korrekte und konsistente Daten weiterverarbeitet werden.

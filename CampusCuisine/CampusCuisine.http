@@ -56,7 +56,7 @@ Accept: application/json
 
 ###
 
-POST {{CampusCuisine_HostAddress}}/recipes/f05c06a4-fc4d-4784-8da7-9639439d5d9e/ratings
+POST {{CampusCuisine_HostAddress}}/recipes/074a8307-04a4-4db9-bbae-365eb675500f/ratings
 Content-Type: application/json
 Accept: application/json
 
