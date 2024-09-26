@@ -1,5 +1,7 @@
 using CampusCuisine.Data;
+using CampusCuisine.Errors;
 using CampusCuisine.Model;
+using CampusCuisine.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CampusCuisine.Controllers
@@ -9,73 +11,70 @@ namespace CampusCuisine.Controllers
     public class RatingsController : ControllerBase
     {
 
-        private readonly AppDbContext dbContext;
+        private readonly RatingsService ratingsService;
+        private readonly Mapper mapper;
 
-        public RatingsController(AppDbContext dbContext)
+        public RatingsController(RatingsService ratingsService, Mapper mapper)
         {
-            this.dbContext = dbContext;
+            this.ratingsService = ratingsService;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<Rating>> GetRatingById([FromRoute] Guid id)
         {
-            var ratingEntity = await dbContext.Ratings.FindAsync(id);
-
-            if (ratingEntity is null)
+            try
             {
-                return NotFound(new { Message = "Rating Id does not exist!" });
+                var ratingEntity = await ratingsService.GetRatingById(id);
+
+                return mapper.RatingEntityToRating(ratingEntity);
             }
-
-            return new Rating
+            catch (NotFoundException e)
             {
-                Id = ratingEntity.Id,
-                RecipeId = ratingEntity.RecipeId,
-                Value = ratingEntity.Value,
-                Comment = ratingEntity.Comment
-            };
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
         [HttpPut]
         [Route("{id}")]
         public async Task<ActionResult<Rating>> PutRating([FromRoute] Guid id, [FromBody] Rating rating)
         {
-            var ratingEntity = await dbContext.Ratings.FindAsync(id);
-
-            if (ratingEntity is null)
+            try
             {
-                return NotFound(new { Message = "Rating Id does not exist!" });
+                var ratingEntity = await ratingsService.UpdateRating(id, rating);
+
+                return mapper.RatingEntityToRating(ratingEntity);
             }
-
-            ratingEntity.Value = rating.Value ?? 0;
-            ratingEntity.Comment = rating.Comment ?? "";
-
-            await dbContext.SaveChangesAsync();
-
-            return new Rating
+            catch (NotFoundException e)
             {
-                Id = ratingEntity.Id,
-                RecipeId = ratingEntity.RecipeId,
-                Value = ratingEntity.Value,
-                Comment = ratingEntity.Comment
-            };
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult<Rating>> DeleteRating([FromRoute] Guid id)
         {
-            var ratingEntity = await dbContext.Ratings.FindAsync(id);
-
-            if (ratingEntity is null)
+            try
             {
-                return NotFound(new { Message = "Rating Id does not exist!" });
+                await ratingsService.DeleteRating(id);
+
+                return NoContent();
             }
-
-            dbContext.Ratings.Remove(ratingEntity);
-            await dbContext.SaveChangesAsync();
-
-            return NoContent();
+            catch (NotFoundException e)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
     }

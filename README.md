@@ -25,3 +25,7 @@ Bisher wurden die Daten nur in Variablen gespeichert, was dazu führte, dass sie
 ## Step 5: Validate data
 
 DTOs (Data Transfer Objects) werden während der Konvertierung in Domänenobjekte validiert. Sollte die Validierung fehlschlagen, werden die entsprechenden Fehler unmittelbar erkannt und zurückgemeldet, bevor die Daten in den weiteren Verarbeitungsprozess gelangen. Dies stellt sicher, dass nur korrekte und konsistente Daten weiterverarbeitet werden.
+
+## Step 6: Services
+
+Durch den Einsatz von Services wird die Business-Logik von der restlichen Anwendung sauber getrennt. Services können auf unterschiedliche Weise in die Anwendung eingebunden und registriert werden. Mithilfe von Dependency Injection werden sie dann genau dort instanziiert, wo sie benötigt werden, was zu einer flexiblen und übersichtlichen Struktur führt.

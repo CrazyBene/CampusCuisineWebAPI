@@ -1,6 +1,10 @@
+using System.Net;
 using CampusCuisine.Data;
 using CampusCuisine.Entity;
+using CampusCuisine.Errors;
 using CampusCuisine.Model;
+using CampusCuisine.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,190 +15,168 @@ namespace CampusCuisine.Controllers
     public class RecipesController : ControllerBase
     {
 
-        private readonly AppDbContext dbContext;
+        private readonly RecipeService recipeService;
+        private readonly RatingsService ratingsService;
+        private readonly Mapper mapper;
 
-        public RecipesController(AppDbContext dbContext)
+        public RecipesController(RecipeService recipeService, RatingsService ratingsService, Mapper mapper)
         {
-            this.dbContext = dbContext;
+            this.recipeService = recipeService;
+            this.ratingsService = ratingsService;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult> GetAllRecipes()
         {
+            var recipeEntities = await recipeService.GetAllRecipes();
+
             return Ok(new
             {
-                recipes = await dbContext.Recipes
-                .Select(entity => new Recipe { Id = entity.Id, Name = entity.Name, Category = entity.Category, Ingredients = entity.Ingredients, Instructions = entity.Instructions })
-                .ToArrayAsync()
+                recipes = recipeEntities.Select(entity => mapper.RecipeEntityToRecipe(entity))
             });
         }
 
         [HttpPost]
         public async Task<ActionResult<Recipe>> CreateRecipe([FromBody] Recipe recipe)
         {
-            var recipeEntity = new RecipeEntity(
-                Guid.NewGuid(),
-                recipe.Name ?? "",
-                recipe.Category ?? "",
-                recipe.Ingredients ?? "",
-                recipe.Instructions ?? ""
-            );
-
-            var existingEntity = await dbContext.Recipes.FindAsync(recipeEntity.Id);
-            if (existingEntity is not null)
+            try
             {
-                return BadRequest(new { Message = "Recipe Id does already exist!" });
+                var recipeEntity = await recipeService.CreateRecipe(recipe);
+
+                return Created("", mapper.RecipeEntityToRecipe(recipeEntity));
             }
-
-            dbContext.Recipes.Add(recipeEntity);
-            await dbContext.SaveChangesAsync();
-
-            recipe.Id = recipeEntity.Id;
-
-            return Created("", recipe);
+            catch (BadDataException e)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<Recipe>> GetRecipeById([FromRoute] Guid id)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
-
-            if (recipeEntity is null)
+            try
             {
-                return NotFound(new { Message = "Recipe Id does not exist!" });
+                var recipeEntity = await recipeService.GetRecipeById(id);
+
+                return mapper.RecipeEntityToRecipe(recipeEntity);
             }
-
-            return new Recipe
+            catch (NotFoundException e)
             {
-                Id = recipeEntity.Id,
-                Name = recipeEntity.Name,
-                Category = recipeEntity.Category,
-                Ingredients = recipeEntity.Ingredients,
-                Instructions = recipeEntity.Instructions
-            };
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
         [HttpPut]
         [Route("{id}")]
         public async Task<ActionResult<Recipe>> PutRecipe([FromRoute] Guid id, [FromBody] Recipe recipe)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
-
-            if (recipeEntity is null)
+            try
             {
-                return NotFound(new { Message = "Recipe Id does not exist!" });
+                var recipeEntity = await recipeService.UpdateRecipe(id, recipe);
+
+                return mapper.RecipeEntityToRecipe(recipeEntity);
             }
-
-            recipeEntity.Name = recipe.Name ?? "";
-            recipeEntity.Category = recipe.Category ?? "";
-            recipeEntity.Ingredients = recipe.Ingredients ?? "";
-            recipeEntity.Instructions = recipe.Instructions ?? "";
-
-            await dbContext.SaveChangesAsync();
-
-            recipe.Id = id;
-
-            return recipe;
+            catch (NotFoundException e)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
         [HttpPatch]
         [Route("{id}")]
         public async Task<ActionResult<Recipe>> PatchRecipe([FromRoute] Guid id, [FromBody] Recipe recipe)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
-
-            if (recipeEntity is null)
+            try
             {
-                return NotFound(new { Message = "Recipe Id does not exist!" });
+                var recipeEntity = await recipeService.UpdateRecipe(id, recipe);
+
+                return mapper.RecipeEntityToRecipe(recipeEntity);
             }
-
-            recipeEntity.Name = recipe.Name ?? recipeEntity.Name;
-            recipeEntity.Category = recipe.Category ?? recipeEntity.Category;
-            recipeEntity.Ingredients = recipe.Ingredients ?? recipeEntity.Ingredients;
-            recipeEntity.Instructions = recipe.Instructions ?? recipeEntity.Instructions;
-
-            await dbContext.SaveChangesAsync();
-
-            return new Recipe
+            catch (NotFoundException e)
             {
-                Id = recipeEntity.Id,
-                Name = recipeEntity.Name,
-                Category = recipeEntity.Category,
-                Ingredients = recipeEntity.Ingredients,
-                Instructions = recipeEntity.Instructions
-            };
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<ActionResult<Recipe>> DeleteRecipe([FromRoute] Guid id)
+        public async Task<ActionResult> DeleteRecipe([FromRoute] Guid id)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
-
-            if (recipeEntity is null)
+            try
             {
-                return NotFound(new { Message = "Recipe Id does not exist!" });
+                await recipeService.DeleteRecipe(id);
+
+                return NoContent();
             }
-
-            var ratingsEntityForRecipe = await dbContext.Ratings.Where(rating => rating.RecipeId == id).ToArrayAsync();
-
-            foreach (var ratingEntity in ratingsEntityForRecipe)
+            catch (NotFoundException e)
             {
-                dbContext.Ratings.Remove(ratingEntity);
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
             }
-
-            dbContext.Recipes.Remove(recipeEntity);
-            await dbContext.SaveChangesAsync();
-
-            return NoContent();
         }
 
         [HttpPost]
         [Route("{id}/ratings")]
         public async Task<ActionResult<Rating>> CreateRating([FromRoute] Guid id, [FromBody] Rating rating)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
-
-            if (recipeEntity is null)
+            try
             {
-                return NotFound(new { Message = "Recipe Id does not exist!" });
+                var ratingEntity = await ratingsService.CreateRating(id, rating);
+
+                return mapper.RatingEntityToRating(ratingEntity);
             }
-
-            var ratingEntity = new RatingEntity(
-                Guid.NewGuid(),
-                id,
-                rating.Value ?? 0,
-                rating.Comment
-            );
-
-            dbContext.Ratings.Add(ratingEntity);
-            await dbContext.SaveChangesAsync();
-
-            rating.Id = ratingEntity.Id;
-            rating.RecipeId = id;
-
-            return rating;
+            catch (BadDataException e)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    detail: e.ErrorMessage
+                );
+            }
+            catch (NotFoundException e)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
         [HttpGet]
         [Route("{id}/ratings")]
         public async Task<ActionResult> GetAllRatingsForRecipe([FromRoute] Guid id)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
-
-            if (recipeEntity is null)
+            try
             {
-                return NotFound(new { Message = "Recipe Id does not exist!" });
+                var ratingEntities = await ratingsService.GetAllRatingsByRecipeId(id);
+
+                return Ok(new
+                {
+                    ratings = ratingEntities.Select(entity => mapper.RatingEntityToRating(entity))
+                });
             }
-
-            return Ok(new
+            catch (NotFoundException e)
             {
-                ratings = await dbContext.Ratings
-                .Where(rating => rating.RecipeId == id)
-                .Select(entity => new Rating { Id = entity.Id, RecipeId = entity.RecipeId, Value = entity.Value, Comment = entity.Comment })
-                .ToArrayAsync()
-            });
+                return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    detail: e.ErrorMessage
+                );
+            }
         }
 
     }
