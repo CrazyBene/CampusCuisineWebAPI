@@ -29,3 +29,7 @@ DTOs (Data Transfer Objects) werden während der Konvertierung in Domänenobjekt
 ## Step 6: Services
 
 Durch den Einsatz von Services wird die Business-Logik von der restlichen Anwendung sauber getrennt. Services können auf unterschiedliche Weise in die Anwendung eingebunden und registriert werden. Mithilfe von Dependency Injection werden sie dann genau dort instanziiert, wo sie benötigt werden, was zu einer flexiblen und übersichtlichen Struktur führt.
+
+## Step 7: Middlewares
+
+Eine Middleware besteht aus zwei logischen Abschnitten: Der erste Teil wird vor dem Aufruf des Endpunkts ausgeführt, während der zweite Teil nach der Erstellung der Response erfolgt. Mehrere Middlewares werden nacheinander durchlaufen, wobei die Reihenfolge, in der sie definiert sind, eine wichtige Rolle spielt, da sie den Ablauf der Verarbeitung beeinflusst.

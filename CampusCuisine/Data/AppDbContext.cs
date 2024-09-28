@@ -1,6 +1,5 @@
 using CampusCuisine.Entity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CampusCuisine.Data
 {

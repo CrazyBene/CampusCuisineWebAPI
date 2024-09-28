@@ -1,4 +1,3 @@
-using CampusCuisine.Data;
 using CampusCuisine.Errors;
 using CampusCuisine.Model;
 using CampusCuisine.Services;
@@ -24,57 +23,27 @@ namespace CampusCuisine.Controllers
         [Route("{id}")]
         public async Task<ActionResult<Rating>> GetRatingById([FromRoute] Guid id)
         {
-            try
-            {
-                var ratingEntity = await ratingsService.GetRatingById(id);
+            var ratingEntity = await ratingsService.GetRatingById(id);
 
-                return mapper.RatingEntityToRating(ratingEntity);
-            }
-            catch (NotFoundException e)
-            {
-                return Problem(
-                    statusCode: StatusCodes.Status404NotFound,
-                    detail: e.ErrorMessage
-                );
-            }
+            return mapper.RatingEntityToRating(ratingEntity);
         }
 
         [HttpPut]
         [Route("{id}")]
         public async Task<ActionResult<Rating>> PutRating([FromRoute] Guid id, [FromBody] Rating rating)
         {
-            try
-            {
-                var ratingEntity = await ratingsService.UpdateRating(id, rating);
+            var ratingEntity = await ratingsService.UpdateRating(id, rating);
 
-                return mapper.RatingEntityToRating(ratingEntity);
-            }
-            catch (NotFoundException e)
-            {
-                return Problem(
-                    statusCode: StatusCodes.Status404NotFound,
-                    detail: e.ErrorMessage
-                );
-            }
+            return mapper.RatingEntityToRating(ratingEntity);
         }
 
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult<Rating>> DeleteRating([FromRoute] Guid id)
         {
-            try
-            {
-                await ratingsService.DeleteRating(id);
+            await ratingsService.DeleteRating(id);
 
-                return NoContent();
-            }
-            catch (NotFoundException e)
-            {
-                return Problem(
-                    statusCode: StatusCodes.Status404NotFound,
-                    detail: e.ErrorMessage
-                );
-            }
+            return NoContent();
         }
 
     }
