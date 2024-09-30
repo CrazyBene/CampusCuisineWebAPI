@@ -33,3 +33,7 @@ Durch den Einsatz von Services wird die Business-Logik von der restlichen Anwend
 ## Step 7: Middlewares
 
 Eine Middleware besteht aus zwei logischen Abschnitten: Der erste Teil wird vor dem Aufruf des Endpunkts ausgeführt, während der zweite Teil nach der Erstellung der Response erfolgt. Mehrere Middlewares werden nacheinander durchlaufen, wobei die Reihenfolge, in der sie definiert sind, eine wichtige Rolle spielt, da sie den Ablauf der Verarbeitung beeinflusst.
+
+## Step 8: Authentifizierung & Autorisierung
+
+Ohne Authentifizierung und Autorisierung hat jeder als anonymer Nutzer uneingeschränkten Zugriff auf alles. Die Authentifizierung ermöglicht es, genau nachzuvollziehen, wer welche Aktionen durchführt. Mit der Autorisierung wird dann sichergestellt, dass nur bestimmte Benutzer oder Rollen auf bestimmte Funktionen und Bereiche zugreifen dürfen. (mehr infos zum aufsetzen von keycloak [hier](https://medium.com/@stefannovak96/authenticating-net-with-keycloak-ae7ce3675110))

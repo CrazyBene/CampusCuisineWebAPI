@@ -10,15 +10,19 @@ namespace CampusCuisine.Services
     {
 
         private readonly AppDbContext dbContext;
+        private readonly Guid userId;
 
-        public RecipeService(AppDbContext dbContext)
+        public RecipeService(AppDbContext dbContext, UserService userService)
         {
             this.dbContext = dbContext;
+
+            userId = userService.GetUserGuid();
         }
 
         public async Task<RecipeEntity> CreateRecipe(Recipe recipe)
         {
             var recipeEntity = new RecipeEntity(
+                userId,
                 recipe.Id ?? Guid.NewGuid(),
                 recipe.Name ?? "",
                 recipe.Category ?? "",
@@ -26,7 +30,7 @@ namespace CampusCuisine.Services
                 recipe.Instructions ?? ""
             );
 
-            var existingEntity = await dbContext.Recipes.FindAsync(recipeEntity.Id);
+            var existingEntity = await dbContext.Recipes.FindAsync(userId, recipeEntity.Id);
             if (existingEntity is not null)
             {
                 throw new BadDataException($"Recipe Id {recipeEntity.Id} does already exist!");
@@ -40,12 +44,12 @@ namespace CampusCuisine.Services
 
         public async Task<List<RecipeEntity>> GetAllRecipes()
         {
-            return await dbContext.Recipes.ToListAsync();
+            return await dbContext.Recipes.Where(entity => entity.UserId == userId).ToListAsync();
         }
 
         public async Task<RecipeEntity> GetRecipeById(Guid id)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
+            var recipeEntity = await dbContext.Recipes.FindAsync(userId, id);
 
             if (recipeEntity is null)
             {
@@ -57,7 +61,7 @@ namespace CampusCuisine.Services
 
         public async Task<RecipeEntity> UpdateRecipe(Guid id, Recipe recipe)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
+            var recipeEntity = await dbContext.Recipes.FindAsync(userId, id);
 
             if (recipeEntity is null)
             {
@@ -75,7 +79,7 @@ namespace CampusCuisine.Services
 
         public async Task DeleteRecipe(Guid id)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(id);
+            var recipeEntity = await dbContext.Recipes.FindAsync(userId, id);
 
             if (recipeEntity is null)
             {

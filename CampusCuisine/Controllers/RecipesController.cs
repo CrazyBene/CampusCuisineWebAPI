@@ -1,12 +1,13 @@
-using CampusCuisine.Errors;
 using CampusCuisine.Model;
 using CampusCuisine.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CampusCuisine.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class RecipesController : ControllerBase
     {
 
