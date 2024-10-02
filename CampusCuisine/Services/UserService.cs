@@ -2,7 +2,7 @@ using System.Security.Claims;
 
 namespace CampusCuisine.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
 
         private readonly IHttpContextAccessor httpContextAccessor;

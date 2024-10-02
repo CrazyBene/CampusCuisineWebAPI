@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CampusCuisine", "CampusCuisine/CampusCuisine.csproj", "{B15E1071-BF02-4F79-BD5E-9BE957243D3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CampusCuisine", "CampusCuisine\CampusCuisine.csproj", "{B15E1071-BF02-4F79-BD5E-9BE957243D3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampusCuisineUnitTests", "CampusCuisineUnitTests\CampusCuisineUnitTests.csproj", "{49F4A13F-FDE4-41D9-8364-62EEB68615E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampusCuisineIntegrationTests", "CampusCuisineIntegrationTests\CampusCuisineIntegrationTests.csproj", "{E12107C4-B7B9-4BF2-9803-E1DCD28472E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{B15E1071-BF02-4F79-BD5E-9BE957243D3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B15E1071-BF02-4F79-BD5E-9BE957243D3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B15E1071-BF02-4F79-BD5E-9BE957243D3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49F4A13F-FDE4-41D9-8364-62EEB68615E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49F4A13F-FDE4-41D9-8364-62EEB68615E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49F4A13F-FDE4-41D9-8364-62EEB68615E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49F4A13F-FDE4-41D9-8364-62EEB68615E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E12107C4-B7B9-4BF2-9803-E1DCD28472E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E12107C4-B7B9-4BF2-9803-E1DCD28472E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E12107C4-B7B9-4BF2-9803-E1DCD28472E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E12107C4-B7B9-4BF2-9803-E1DCD28472E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -37,3 +37,7 @@ Eine Middleware besteht aus zwei logischen Abschnitten: Der erste Teil wird vor 
 ## Step 8: Authentifizierung & Autorisierung
 
 Ohne Authentifizierung und Autorisierung hat jeder als anonymer Nutzer uneingeschränkten Zugriff auf alles. Die Authentifizierung ermöglicht es, genau nachzuvollziehen, wer welche Aktionen durchführt. Mit der Autorisierung wird dann sichergestellt, dass nur bestimmte Benutzer oder Rollen auf bestimmte Funktionen und Bereiche zugreifen dürfen. (mehr infos zum aufsetzen von keycloak [hier](https://medium.com/@stefannovak96/authenticating-net-with-keycloak-ae7ce3675110))
+
+## Step 9: Testing
+
+Kein Softwareprojekt sollte ohne Tests auskommen. Verschiedene Testarten überprüfen unterschiedliche Aspekte und Komponenten eines Systems. Unit-Tests konzentrieren sich darauf, einzelne Funktionen isoliert zu testen, um sicherzustellen, dass sie korrekt arbeiten. Integrationstests hingegen simulieren einen vollständigen Ablauf, wie er durch eine typische Benutzerinteraktion entsteht, und prüfen, ob die verschiedenen Systemkomponenten reibungslos zusammenarbeiten. Beide Testarten spielen eine entscheidende Rolle für die Qualitätssicherung und das fehlerfreie Funktionieren der Software.

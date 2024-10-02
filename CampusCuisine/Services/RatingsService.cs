@@ -12,7 +12,7 @@ namespace CampusCuisine.Services
         private readonly AppDbContext dbContext;
         private readonly Guid userId;
 
-        public RatingsService(AppDbContext dbContext, UserService userService)
+        public RatingsService(AppDbContext dbContext, IUserService userService)
         {
             this.dbContext = dbContext;
 

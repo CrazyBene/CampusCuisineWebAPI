@@ -14,7 +14,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<Mapper>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<RecipeService>();
 builder.Services.AddScoped<RatingsService>();
 
@@ -35,3 +35,5 @@ app.UseMiddleware<LoggingMiddleware>();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
