@@ -41,3 +41,12 @@ Ohne Authentifizierung und Autorisierung hat jeder als anonymer Nutzer uneingesc
 ## Step 9: Testing
 
 Kein Softwareprojekt sollte ohne Tests auskommen. Verschiedene Testarten überprüfen unterschiedliche Aspekte und Komponenten eines Systems. Unit-Tests konzentrieren sich darauf, einzelne Funktionen isoliert zu testen, um sicherzustellen, dass sie korrekt arbeiten. Integrationstests hingegen simulieren einen vollständigen Ablauf, wie er durch eine typische Benutzerinteraktion entsteht, und prüfen, ob die verschiedenen Systemkomponenten reibungslos zusammenarbeiten. Beide Testarten spielen eine entscheidende Rolle für die Qualitätssicherung und das fehlerfreie Funktionieren der Software.
+
+## Step 10: Deploying
+
+Im letzten Schritt wird die App mithilfe von Docker zu einem Image gebaut, das anschließend bereitgestellt (deployed) werden kann. Es ist jedoch wichtig zu beachten, dass die App nun in einem Container läuft. Daher müssen die Adressen für die Datenbank und Keycloak angepasst werden, da localhost innerhalb des Containers auf den Container selbst verweist und nicht auf die Host-Maschine.
+
+```shell
+docker build -t campus_cuisine .
+docker run -it --rm -p 5023:8080 --name campus_cuisine_sample campus_cuisine
+```
