@@ -1,6 +1,7 @@
 using CampusCuisine.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace CampusCuisineIntegrationTests
 {
@@ -20,6 +21,15 @@ namespace CampusCuisineIntegrationTests
                 if (descriptor != null)
                 {
                     services.Remove(descriptor);
+                }
+
+                var configurationDescriptor = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(IDbContextOptionsConfiguration<AppDbContext>)
+                );
+
+                if (configurationDescriptor != null)
+                {
+                    services.Remove(configurationDescriptor);
                 }
 
                 services.AddDbContext<AppDbContext>(options =>
