@@ -17,7 +17,7 @@ namespace CampusCuisineIntegrationTests
         }
 
         [Fact]
-        public async void CreateRecipe_Success()
+        public async Task CreateRecipe_Success()
         {
             // Act
             var expected = new Recipe
@@ -40,7 +40,7 @@ namespace CampusCuisineIntegrationTests
         }
 
         [Fact]
-        public async void CreateRecipe_Fail()
+        public async Task CreateRecipe_Fail()
         {
             // Act
             var expected = new Recipe

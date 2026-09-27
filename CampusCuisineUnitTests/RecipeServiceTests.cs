@@ -10,7 +10,7 @@ namespace CampusCuisineUnitTests;
 public class RecipeServiceTests
 {
     [Fact]
-    public async void GetRecipeById_Success()
+    public async Task GetRecipeById_Success()
     {
         // arrange
         var userId = Guid.Parse("2146e1ff-5884-44c5-a645-4693d884d18a");
@@ -45,7 +45,7 @@ public class RecipeServiceTests
     }
 
     [Fact]
-    public async void GetRecipeById_NotFound()
+    public async Task GetRecipeById_NotFound()
     {
         // arrange
         var userId = Guid.Parse("2146e1ff-5884-44c5-a645-4693d884d18a");

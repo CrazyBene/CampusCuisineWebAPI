@@ -12,7 +12,7 @@ namespace CampusCuisineIntegrationTests
         }
 
         [Fact]
-        public async void GetStatus_Success()
+        public async Task GetStatus_Success()
         {
             // Arrange
             var client = factory.CreateClient();
