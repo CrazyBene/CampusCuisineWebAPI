@@ -29,7 +29,7 @@ namespace CampusCuisine.Controllers
             recipes.Add(recipe.Id, recipe);
             ratings.Add(recipe.Id, []);
 
-            return recipe;
+            return Created("", recipe);
         }
 
         [HttpGet]
