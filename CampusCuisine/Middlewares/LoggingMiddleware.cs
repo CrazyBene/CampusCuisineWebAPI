@@ -14,11 +14,11 @@ namespace CampusCuisine.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            logger.LogInformation($"Request: {context.Request.Path} started.", DateTime.UtcNow.ToLongTimeString());
+            logger.LogInformation($"Request: {context.Request.Path} started.");
 
             await next(context);
 
-            logger.LogInformation($"Request: {context.Request.Path} finished.", DateTime.UtcNow.ToLongTimeString());
+            logger.LogInformation($"Request: {context.Request.Path} finished.");
         }
 
     }

@@ -22,15 +22,14 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention());
 
 builder.Services.AddKeycloakWebApiAuthentication(configuration);
-builder.Services.AddAuthentication();
 
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseExceptionHandler();
 app.UseMiddleware<LoggingMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
