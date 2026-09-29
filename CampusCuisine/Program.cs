@@ -45,9 +45,9 @@ app.MapPatch("/recipes/{id}", (int id, Recipe recipe) =>
         return Results.NotFound();
     }
 
-    recipes[recipe.Id].Category = recipe.Category;
+    recipes[id].Category = recipe.Category;
 
-    return Results.Ok(recipes[recipe.Id]);
+    return Results.Ok(recipes[id]);
 });
 
 app.MapDelete("/recipes/{id}", (int id) =>
