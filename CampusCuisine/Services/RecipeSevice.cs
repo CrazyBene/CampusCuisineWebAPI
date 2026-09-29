@@ -30,7 +30,7 @@ namespace CampusCuisine.Services
                 recipe.Instructions ?? ""
             );
 
-            var existingEntity = await dbContext.Recipes.FindAsync(userId, recipeEntity.Id);
+            var existingEntity = await dbContext.Recipes.FindAsync(recipeEntity.Id);
             if (existingEntity is not null)
             {
                 throw new BadDataException($"Recipe Id {recipeEntity.Id} does already exist!");
@@ -44,12 +44,12 @@ namespace CampusCuisine.Services
 
         public async Task<List<RecipeEntity>> GetAllRecipes()
         {
-            return await dbContext.Recipes.Where(entity => entity.UserId == userId).ToListAsync();
+            return await dbContext.Recipes.ToListAsync();
         }
 
         public async Task<RecipeEntity> GetRecipeById(Guid id)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(userId, id);
+            var recipeEntity = await dbContext.Recipes.FindAsync(id);
 
             if (recipeEntity is null)
             {
@@ -61,11 +61,16 @@ namespace CampusCuisine.Services
 
         public async Task<RecipeEntity> UpdateRecipe(Guid id, Recipe recipe)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(userId, id);
+            var recipeEntity = await dbContext.Recipes.FindAsync(id);
 
             if (recipeEntity is null)
             {
                 throw new NotFoundException($"Recipe Id {id} does not exist!");
+            }
+
+            if (recipeEntity.UserId != userId)
+            {
+                throw new ForbiddenException($"Recipe Id {id} belongs to another user!");
             }
 
             recipeEntity.Name = recipe.Name ?? recipeEntity.Name;
@@ -79,11 +84,16 @@ namespace CampusCuisine.Services
 
         public async Task DeleteRecipe(Guid id)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(userId, id);
+            var recipeEntity = await dbContext.Recipes.FindAsync(id);
 
             if (recipeEntity is null)
             {
                 throw new NotFoundException($"Recipe Id {id} does not exist!");
+            }
+
+            if (recipeEntity.UserId != userId)
+            {
+                throw new ForbiddenException($"Recipe Id {id} belongs to another user!");
             }
 
             var ratingsEntityForRecipe = await dbContext.Ratings.Where(rating => rating.RecipeId == id).ToArrayAsync();
