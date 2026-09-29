@@ -50,3 +50,19 @@ Im letzten Schritt wird die App mithilfe von Docker zu einem Image gebaut, das a
 docker build -t campus_cuisine .
 docker run -it --rm -p 5023:8080 --name campus_cuisine_sample campus_cuisine
 ```
+
+Die App läuft im Container als `Production` und liest deshalb die `appsettings.json`, in der Datenbank und Keycloak über `host.docker.internal` erreicht werden.
+
+### Hinweis für Linux
+
+Unter Windows und macOS stellt Docker Desktop `host.docker.internal` automatisch bereit. Unter Linux muss der Name beim Starten des Containers ergänzt werden:
+
+```shell
+docker run -it --rm -p 5023:8080 --add-host host.docker.internal:host-gateway --name campus_cuisine_sample campus_cuisine
+```
+
+Keycloak schreibt seine eigene Adresse in jedes Token. Die API im Container erwartet Tokens von `http://host.docker.internal:8080`, deshalb muss auch das Token über diese Adresse geholt werden. Dafür unter Linux einmalig folgenden Eintrag in `/etc/hosts` ergänzen:
+
+```shell
+echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts
+```
