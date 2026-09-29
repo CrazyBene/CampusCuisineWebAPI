@@ -16,6 +16,7 @@ namespace CampusCuisine.Middlewares
             var statusCode = exception switch
             {
                 BadDataException => StatusCodes.Status400BadRequest,
+                ForbiddenException => StatusCodes.Status403Forbidden,
                 NotFoundException => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };

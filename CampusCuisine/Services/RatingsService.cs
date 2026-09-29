@@ -21,7 +21,7 @@ namespace CampusCuisine.Services
 
         public async Task<RatingEntity> CreateRating(Guid recipeId, Rating rating)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(userId, recipeId);
+            var recipeEntity = await dbContext.Recipes.FindAsync(recipeId);
 
             if (recipeEntity is null)
             {
@@ -36,7 +36,7 @@ namespace CampusCuisine.Services
                 rating.Comment
             );
 
-            var existingEntity = await dbContext.Ratings.FindAsync(userId, ratingEntity.Id);
+            var existingEntity = await dbContext.Ratings.FindAsync(ratingEntity.Id);
             if (existingEntity is not null)
             {
                 throw new BadDataException($"Rating Id {ratingEntity.Id} does already exist!");
@@ -50,19 +50,19 @@ namespace CampusCuisine.Services
 
         public async Task<List<RatingEntity>> GetAllRatingsByRecipeId(Guid recipeId)
         {
-            var recipeEntity = await dbContext.Recipes.FindAsync(userId, recipeId);
+            var recipeEntity = await dbContext.Recipes.FindAsync(recipeId);
 
             if (recipeEntity is null)
             {
                 throw new NotFoundException($"Recipe Id {recipeId} does not exist!");
             }
 
-            return await dbContext.Ratings.Where(rating => rating.UserId == userId && rating.RecipeId == recipeId).ToListAsync();
+            return await dbContext.Ratings.Where(rating => rating.RecipeId == recipeId).ToListAsync();
         }
 
         public async Task<RatingEntity> GetRatingById(Guid id)
         {
-            var ratingEntity = await dbContext.Ratings.FindAsync(userId, id);
+            var ratingEntity = await dbContext.Ratings.FindAsync(id);
 
             if (ratingEntity is null)
             {
@@ -74,11 +74,16 @@ namespace CampusCuisine.Services
 
         public async Task<RatingEntity> UpdateRating(Guid id, Rating rating)
         {
-            var ratingEntity = await dbContext.Ratings.FindAsync(userId, id);
+            var ratingEntity = await dbContext.Ratings.FindAsync(id);
 
             if (ratingEntity is null)
             {
                 throw new NotFoundException($"Rating Id {id} does not exist!");
+            }
+
+            if (ratingEntity.UserId != userId)
+            {
+                throw new ForbiddenException($"Rating Id {id} belongs to another user!");
             }
 
             ratingEntity.Value = rating.Value ?? 0;
@@ -91,11 +96,16 @@ namespace CampusCuisine.Services
 
         public async Task DeleteRating(Guid id)
         {
-            var ratingEntity = await dbContext.Ratings.FindAsync(userId, id);
+            var ratingEntity = await dbContext.Ratings.FindAsync(id);
 
             if (ratingEntity is null)
             {
                 throw new NotFoundException($"Rating Id {id} does not exist!");
+            }
+
+            if (ratingEntity.UserId != userId)
+            {
+                throw new ForbiddenException($"Rating Id {id} belongs to another user!");
             }
 
             dbContext.Ratings.Remove(ratingEntity);
