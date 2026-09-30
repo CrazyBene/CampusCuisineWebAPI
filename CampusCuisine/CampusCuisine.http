@@ -1,29 +1,38 @@
-@CampusCuisine_HostAddress = http://localhost:5023
+### ─── Step 01: Endpunkte (Minimal API) ───
+### Requests von oben nach unten mit "Send Request" ausführen.
 
-GET {{CampusCuisine_HostAddress}}/
-Accept: text/plain
+@host = http://localhost:5023
 
-###
+### 1. Hello World → 200
+GET {{host}}/
 
-POST {{CampusCuisine_HostAddress}}/createRecipe
+### 2. Rezept erstellen → 200
+POST {{host}}/createRecipe
 Content-Type: application/json
-Accept: text/plain
 
 {
     "name": "Protein-Müsli",
     "category": "Frühstück",
-    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
-    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+    "ingredients": "50g Haferflocken, 50g Mandeln, 500g Magerquark, 250g Beeren",
+    "instructions": "Mandeln hacken, alles mischen und zum Schluss die Milch drüber."
 }
 
-###
+### 3. Zweites Rezept erstellen → 200
+POST {{host}}/createRecipe
+Content-Type: application/json
 
-GET {{CampusCuisine_HostAddress}}/getAllRecipes
-Accept: application/json
+{
+    "name": "Nudeln mit Pesto",
+    "category": "Hauptgericht",
+    "ingredients": "250g Nudeln, 1 Glas Pesto, Parmesan",
+    "instructions": "Nudeln kochen, Pesto unterrühren, Parmesan drüber."
+}
 
-###
+### 4. Alle Rezepte → 200
+GET {{host}}/getAllRecipes
 
-GET {{CampusCuisine_HostAddress}}/retrieveSingleRecipe/0
-Accept: application/json
+### 5. Ein Rezept über seine Position in der Liste → 200
+GET {{host}}/retrieveSingleRecipe/0
 
-###
+### 6. Nicht vorhandenes Rezept → 200, aber ohne Rezept (kein Fehler-Statuscode!)
+GET {{host}}/retrieveSingleRecipe/5
