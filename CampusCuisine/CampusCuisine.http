@@ -1,76 +1,80 @@
-@CampusCuisine_HostAddress = http://localhost:5023
+### ─── Step 03: Controller ───
+### Requests von oben nach unten mit "Send Request" ausführen.
+### Dieselben Endpunkte wie in Step 02, jetzt in Controllern.
 
-GET {{CampusCuisine_HostAddress}}/
-Accept: application/json
+@host = http://localhost:5023
 
-###
+### 1. Status (StatusController) → 200
+GET {{host}}/
 
-POST {{CampusCuisine_HostAddress}}/recipes
+### 2. Rezept erstellen (die Id schickt noch der Client mit) → 201
+POST {{host}}/recipes
 Content-Type: application/json
-Accept: application/json
 
 {
-    "id": 0,
+    "id": 1,
     "name": "Protein-Müsli",
     "category": "Frühstück",
-    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
-    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+    "ingredients": "50g Haferflocken, 50g Mandeln, 500g Magerquark, 250g Beeren",
+    "instructions": "Mandeln hacken, alles mischen und zum Schluss die Milch drüber."
 }
 
-###
-
-GET {{CampusCuisine_HostAddress}}/recipes
-Accept: application/json
-
-###
-
-GET {{CampusCuisine_HostAddress}}/recipes/0
-Accept: application/json
-
-###
-
-PUT {{CampusCuisine_HostAddress}}/recipes/0
+### 3. Dieselbe Id noch einmal → 400
+POST {{host}}/recipes
 Content-Type: application/json
-Accept: application/json
+
+{
+    "id": 1,
+    "name": "Protein-Müsli",
+    "category": "Frühstück",
+    "ingredients": "50g Haferflocken, 50g Mandeln, 500g Magerquark, 250g Beeren",
+    "instructions": "Mandeln hacken, alles mischen und zum Schluss die Milch drüber."
+}
+
+### 4. Alle Rezepte → 200
+GET {{host}}/recipes
+
+### 5. Ein Rezept → 200
+GET {{host}}/recipes/1
+
+### 6. Rezept komplett ersetzen → 200
+PUT {{host}}/recipes/1
+Content-Type: application/json
 
 {
     "name": "Protein-Müsli",
-    "category": "Hauptgericht",
-    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
-    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+    "category": "Snack",
+    "ingredients": "50g Haferflocken, 50g Mandeln, 500g Magerquark, 250g Beeren",
+    "instructions": "Mandeln hacken, alles mischen und zum Schluss die Milch drüber."
 }
 
-###
-
-PATCH {{CampusCuisine_HostAddress}}/recipes/0
+### 7. Nur die Kategorie ändern → 200
+PATCH {{host}}/recipes/1
 Content-Type: application/json
-Accept: application/json
 
 {
     "category": "Abendbrot"
 }
 
-###
-
-DELETE  {{CampusCuisine_HostAddress}}/recipes/0
-Accept: application/json
-
-###
-
-POST  {{CampusCuisine_HostAddress}}/recipes/0/ratings
+### 8. Rezept bewerten → 200
+POST {{host}}/recipes/1/ratings
 Content-Type: application/json
-Accept: application/json
 
 {
-    "id": 0,
-    "recipeId": 0,
-    "value": 3,
-    "comment": "Dies is ein Kommentar"
+    "id": 1,
+    "recipeId": 1,
+    "value": 8,
+    "comment": "Sehr lecker!"
 }
 
-###
+### 9. Bewertungen des Rezepts → 200
+GET {{host}}/recipes/1/ratings
 
-GET  {{CampusCuisine_HostAddress}}/recipes/0/ratings
-Accept: application/json
+### 10. Nicht vorhandenes Rezept → 404
+GET {{host}}/recipes/99
 
-###
+### 11. Rezept löschen → 204
+DELETE {{host}}/recipes/1
+
+### 12. Gelöschtes Rezept → 404
+GET {{host}}/recipes/1
