@@ -68,9 +68,9 @@ namespace CampusCuisine.Controllers
                 return NotFound(new { Message = "Recipe Id does not exist!" });
             }
 
-            recipes[recipe.Id].Category = recipe.Category;
+            recipes[id].Category = recipe.Category;
 
-            return recipes[recipe.Id];
+            return recipes[id];
         }
 
         [HttpDelete]
