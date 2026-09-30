@@ -1,94 +1,120 @@
-@CampusCuisine_HostAddress = http://localhost:5023
+### ─── Step 06: Services ───
+### Requests von oben nach unten mit "Send Request" ausführen.
+### Vorher die Datenbank starten: docker compose -f docker/postgres/step04/docker-compose.yaml up -d
+### Gleiches Verhalten wie in Step 05, die Logik liegt jetzt in den Services.
 
-GET {{CampusCuisine_HostAddress}}/
-Accept: application/json
+@host = http://localhost:5023
 
-###
+### 1. Status → 200
+GET {{host}}/
 
-POST {{CampusCuisine_HostAddress}}/recipes
+### 2. Rezept erstellen, die Id vergibt jetzt das Backend → 201
+# @name createRecipe
+POST {{host}}/recipes
 Content-Type: application/json
-Accept: application/json
 
 {
     "name": "Protein-Müsli",
     "category": "Frühstück",
-    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
-    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+    "ingredients": "50g Haferflocken, 50g Mandeln, 500g Magerquark, 250g Beeren",
+    "instructions": "Mandeln hacken, alles mischen und zum Schluss die Milch drüber."
 }
 
-###
-
-GET {{CampusCuisine_HostAddress}}/recipes
-Accept: application/json
-
-###
-
-GET {{CampusCuisine_HostAddress}}/recipes/f05c06a4-fc4d-4784-8da7-9639439d5d9e
-Accept: application/json
-
-###
-
-PUT {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
+### 3. Zweites Rezept erstellen → 201
+POST {{host}}/recipes
 Content-Type: application/json
-Accept: application/json
+
+{
+    "name": "Nudeln mit Pesto",
+    "category": "Hauptgericht",
+    "ingredients": "250g Nudeln, 1 Glas Pesto, Parmesan",
+    "instructions": "Nudeln kochen, Pesto unterrühren, Parmesan drüber."
+}
+
+### 4. Alle Rezepte → 200
+GET {{host}}/recipes
+
+### 5. Das erste Rezept über die erzeugte Id → 200
+GET {{host}}/recipes/{{createRecipe.response.body.$.id}}
+
+### 6. Rezept komplett ersetzen → 200
+PUT {{host}}/recipes/{{createRecipe.response.body.$.id}}
+Content-Type: application/json
 
 {
     "name": "Protein-Müsli",
-    "category": "Hauptgericht",
-    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
-    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+    "category": "Snack",
+    "ingredients": "50g Haferflocken, 50g Mandeln, 500g Magerquark, 250g Beeren",
+    "instructions": "Mandeln hacken, alles mischen und zum Schluss die Milch drüber."
 }
 
-###
-
-PATCH {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
+### 7. Kategorie ändern → 200
+PATCH {{host}}/recipes/{{createRecipe.response.body.$.id}}
 Content-Type: application/json
-Accept: application/json
 
 {
+    "name": "Protein-Müsli",
     "category": "Abendbrot"
 }
 
-###
-
-DELETE {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
-Accept: application/json
-
-###
-
-POST {{CampusCuisine_HostAddress}}/recipes/074a8307-04a4-4db9-bbae-365eb675500f/ratings
+### 8. Ungültig: Name zu kurz → 400
+POST {{host}}/recipes
 Content-Type: application/json
-Accept: application/json
 
 {
-    "value": 4
+    "name": "Tee",
+    "category": "Getränk"
 }
 
-###
-
-GET {{CampusCuisine_HostAddress}}/recipes/b8108960-c878-4836-99cd-6e0b32f33d05/ratings
-Accept: application/json
-
-###
-
-GET {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
-Accept: application/json
-
-###
-
-Put {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
+### 9. Ungültig: Kategorie fehlt → 400
+POST {{host}}/recipes
 Content-Type: application/json
-Accept: application/json
 
 {
-    "value": 6,
-    "comment": "Dies is ein anderer Kommentar"
+    "name": "Pfannkuchen"
 }
 
+### 10. Rezept bewerten → 200
+# @name createRating
+POST {{host}}/recipes/{{createRecipe.response.body.$.id}}/ratings
+Content-Type: application/json
 
-###
+{
+    "value": 8,
+    "comment": "Sehr lecker!"
+}
 
-DELETE {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
-Accept: application/json
+### 11. Ungültig: Bewertung über 10 → 400
+POST {{host}}/recipes/{{createRecipe.response.body.$.id}}/ratings
+Content-Type: application/json
 
-###
+{
+    "value": 11
+}
+
+### 12. Bewertungen des Rezepts → 200
+GET {{host}}/recipes/{{createRecipe.response.body.$.id}}/ratings
+
+### 13. Eine Bewertung → 200
+GET {{host}}/ratings/{{createRating.response.body.$.id}}
+
+### 14. Bewertung ändern → 200
+PUT {{host}}/ratings/{{createRating.response.body.$.id}}
+Content-Type: application/json
+
+{
+    "value": 9,
+    "comment": "Noch besser mit Honig!"
+}
+
+### 15. Bewertung löschen → 204
+DELETE {{host}}/ratings/{{createRating.response.body.$.id}}
+
+### 16. Nicht vorhandenes Rezept → 404
+GET {{host}}/recipes/00000000-0000-0000-0000-000000000001
+
+### 17. Rezept löschen → 204
+DELETE {{host}}/recipes/{{createRecipe.response.body.$.id}}
+
+### 18. Gelöschtes Rezept → 404
+GET {{host}}/recipes/{{createRecipe.response.body.$.id}}
