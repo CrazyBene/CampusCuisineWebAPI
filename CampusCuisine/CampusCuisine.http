@@ -1,118 +1,136 @@
-@CampusCuisine_HostAddress = http://localhost:5023
-@Keycloak_HostAddress = http://host.docker.internal:8080
-@Bearer_Token = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0VmgzOXpSajJHWXRuaWhTOVNoV0doWVF5S1dzMEpIQS1kTEFkTW9nSjNZIn0.eyJleHAiOjE3MjgzODgyNzksImlhdCI6MTcyODM4NjQ3OSwianRpIjoiYjkxZWZhYTYtNTM5Yy00YzA2LTg0ZGMtNWRiNDM1YjM2MzQyIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjgwODAvcmVhbG1zL2NhbXB1c19jdWlzaW5lIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjUzYjc5ZWQyLTMzNjUtNGNlMy04ODllLWQ5NjZiYThiYzE3NiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFzcF9uZXRfd2ViX2FwaSIsInNpZCI6Ijc2ZTJmMTA2LTgzOTgtNDMzYy1hYTNlLTZlYmM3N2NlNTMxMSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtY2FtcHVzX2N1aXNpbmUiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJVc2VyIEVpbnMiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ1c2VyMSIsImdpdmVuX25hbWUiOiJVc2VyIiwiZmFtaWx5X25hbWUiOiJFaW5zIiwiZW1haWwiOiJ1c2VyQHRlc3QuZGUifQ.M7l22Ia3c8B3nQ8M1RmDAELFPPYacMqVqRykKXq-nt2vOqgaFplwyHsKsMSVTiYs9Pyx89ZBt9r08QoMQ4PbRqGxkqADniUeG-a4wILdRTj20Z3Jc1FlXYbN2Me4MbF_KQGQY3VmHGifF9e-7i4zYZtRqN9EuBBSr_gsN9shoAbGo2OAwei6xDqDIz3eRPPOU5U8qYUj7dkoAI1fWBVlFC5PlCvpWIRzfMuTMPyZmMhf_GDDpXvjUjvLiHaaDt7F2u-9-zKsuBri9DGPiio4iDODevCwlRN9f7anToe1a4Ei3-Dau86fjq85D45I_kgRhCCR3muzGDD4odYshCoB7w
+### ─── Step 10: Deployment ───
+### Requests von oben nach unten mit "Send Request" ausführen.
+### Vorher starten:
+###   docker compose -f docker/postgres/step08/docker-compose.yaml up -d
+###   docker compose -f docker/keycloak/step08/docker-compose.yaml up -d
+### Tokens laufen nach 5 Minuten ab, dann einfach Login 3 und 4 noch einmal ausführen.
+### Die API im Docker-Container ist auch unter localhost:5023 erreichbar.
 
-GET {{CampusCuisine_HostAddress}}/
-Accept: application/json
+@host = http://localhost:5023
+# Für die API im Docker-Container keycloak auf http://host.docker.internal:8080 ändern,
+# sonst passt die Adresse im Token nicht (siehe README).
+@keycloak = http://localhost:8080
 
-###
+### 1. Status ist öffentlich → 200
+GET {{host}}/
 
-POST {{Keycloak_HostAddress}}/realms/campus_cuisine/protocol/openid-connect/token
+### 2. Rezepte ohne Token → 401
+GET {{host}}/recipes
+
+### 3. Login user1 → 200
+# @name loginUser1
+POST {{keycloak}}/realms/campus_cuisine/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-grant_type=password
-&client_id=asp_net_web_api
-&username=user1
-&password=test
-&client_secret=fzFLBCDO04rHFEChsZvi3s3PBQuRUFXb
+grant_type=password&client_id=asp_net_web_api&client_secret=fzFLBCDO04rHFEChsZvi3s3PBQuRUFXb&username=user1&password=test
 
-###
+### 4. Login user2 → 200
+# @name loginUser2
+POST {{keycloak}}/realms/campus_cuisine/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
 
-POST {{CampusCuisine_HostAddress}}/recipes
+grant_type=password&client_id=asp_net_web_api&client_secret=fzFLBCDO04rHFEChsZvi3s3PBQuRUFXb&username=user2&password=test
+
+### 5. user1 erstellt ein Rezept → 201
+# @name createRecipe
+POST {{host}}/recipes
+Authorization: Bearer {{loginUser1.response.body.$.access_token}}
 Content-Type: application/json
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
 
 {
     "name": "Protein-Müsli",
     "category": "Frühstück",
-    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
-    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+    "ingredients": "50g Haferflocken, 50g Mandeln, 500g Magerquark, 250g Beeren",
+    "instructions": "Mandeln hacken, alles mischen und zum Schluss die Milch drüber."
 }
 
-###
+### 6. user2 sieht alle Rezepte → 200
+GET {{host}}/recipes
+Authorization: Bearer {{loginUser2.response.body.$.access_token}}
 
-GET {{CampusCuisine_HostAddress}}/recipes
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
+### 7. user2 liest das Rezept von user1 → 200
+GET {{host}}/recipes/{{createRecipe.response.body.$.id}}
+Authorization: Bearer {{loginUser2.response.body.$.access_token}}
 
-###
-
-GET {{CampusCuisine_HostAddress}}/recipes/7d2bb8a7-c1d1-42da-9828-90f7ec3b2dff
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
-
-###
-
-PUT {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
+### 8. user2 will das Rezept ändern → 403
+PUT {{host}}/recipes/{{createRecipe.response.body.$.id}}
+Authorization: Bearer {{loginUser2.response.body.$.access_token}}
 Content-Type: application/json
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
 
 {
     "name": "Protein-Müsli",
-    "category": "Hauptgericht",
-    "ingredients": "50g Mandelkerne, 50g Haferflocken, 50g Sojaflocken, 500g Erdbeeren, 125g Himbeeren, 500g Magerquark, 800ml Milch",
-    "instructions": "Mandlen grob hacken. Alle Zutaten in eine Schüssel geben und zum SCHLUSS Milch drüber leeren."
+    "category": "Snack",
+    "ingredients": "50g Haferflocken, 50g Mandeln, 500g Magerquark, 250g Beeren",
+    "instructions": "Mandeln hacken, alles mischen und zum Schluss die Milch drüber."
 }
 
-###
+### 9. user2 will das Rezept löschen → 403
+DELETE {{host}}/recipes/{{createRecipe.response.body.$.id}}
+Authorization: Bearer {{loginUser2.response.body.$.access_token}}
 
-PATCH {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
+### 10. user2 bewertet das Rezept von user1 → 200
+# @name createRating
+POST {{host}}/recipes/{{createRecipe.response.body.$.id}}/ratings
+Authorization: Bearer {{loginUser2.response.body.$.access_token}}
 Content-Type: application/json
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
 
 {
+    "value": 8,
+    "comment": "Sehr lecker!"
+}
+
+### 11. user1 sieht die Bewertung von user2 → 200
+GET {{host}}/recipes/{{createRecipe.response.body.$.id}}/ratings
+Authorization: Bearer {{loginUser1.response.body.$.access_token}}
+
+### 12. user1 will die Bewertung von user2 ändern → 403
+PUT {{host}}/ratings/{{createRating.response.body.$.id}}
+Authorization: Bearer {{loginUser1.response.body.$.access_token}}
+Content-Type: application/json
+
+{
+    "value": 1,
+    "comment": "Schlecht!"
+}
+
+### 13. user2 ändert die eigene Bewertung → 200
+PUT {{host}}/ratings/{{createRating.response.body.$.id}}
+Authorization: Bearer {{loginUser2.response.body.$.access_token}}
+Content-Type: application/json
+
+{
+    "value": 9,
+    "comment": "Noch besser mit Honig!"
+}
+
+### 14. user1 ändert das eigene Rezept → 200
+PATCH {{host}}/recipes/{{createRecipe.response.body.$.id}}
+Authorization: Bearer {{loginUser1.response.body.$.access_token}}
+Content-Type: application/json
+
+{
+    "name": "Protein-Müsli",
     "category": "Abendbrot"
 }
 
-###
-
-DELETE {{CampusCuisine_HostAddress}}/recipes/5b9e825b-67d3-4c3b-8220-a887648f29cd
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
-
-###
-
-POST {{CampusCuisine_HostAddress}}/recipes/364950b9-48bf-4a48-b14b-45ba1ba734aa/ratings
+### 15. Ungültiges Rezept → 400
+POST {{host}}/recipes
+Authorization: Bearer {{loginUser1.response.body.$.access_token}}
 Content-Type: application/json
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
 
 {
-    "value": 4
+    "name": "Tee",
+    "category": "Getränk"
 }
 
-###
+### 16. Nicht vorhandenes Rezept → 404
+GET {{host}}/recipes/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{loginUser1.response.body.$.access_token}}
 
-GET {{CampusCuisine_HostAddress}}/recipes/b8108960-c878-4836-99cd-6e0b32f33d05/ratings
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
+### 17. user1 löscht das eigene Rezept, inklusive Bewertungen → 204
+DELETE {{host}}/recipes/{{createRecipe.response.body.$.id}}
+Authorization: Bearer {{loginUser1.response.body.$.access_token}}
 
-###
-
-GET {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
-
-###
-
-Put {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
-Content-Type: application/json
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
-
-{
-    "value": 6,
-    "comment": "Dies is ein anderer Kommentar"
-}
-
-
-###
-
-DELETE {{CampusCuisine_HostAddress}}/ratings/dd1dc7ac-66f8-4217-8c59-b1ef7cbe0f75
-Accept: application/json
-Authorization: Bearer {{Bearer_Token}}
-
-###
+### 18. Gelöschtes Rezept → 404
+GET {{host}}/recipes/{{createRecipe.response.body.$.id}}
+Authorization: Bearer {{loginUser2.response.body.$.access_token}}
